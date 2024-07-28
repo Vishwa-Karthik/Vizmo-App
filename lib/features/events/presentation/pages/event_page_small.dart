@@ -210,19 +210,24 @@ class _EventPageSmallState extends State<EventPageSmall> with EventTypeUtility {
             return const Center(child: CircularProgressIndicator.adaptive());
           } else if (state is EventsError) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(AppConstants.errorSvgFilePath),
-                  SizedBox(child: Text(state.errorMessage ?? "")),
-                  IconButton(
-                    onPressed: () {
-                      invokeEventsPerDay(
-                          dateTime: selectedDateTime.toUtc().toString());
-                    },
-                    icon: Icon(Icons.refresh, size: AppConstants.fontSize28),
-                  ),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      AppConstants.errorSvgFilePath,
+                      height: AppConstants.imageSize250,
+                    ),
+                    SizedBox(child: Text(state.errorMessage ?? "")),
+                    IconButton(
+                      onPressed: () {
+                        invokeEventsPerDay(
+                            dateTime: selectedDateTime.toUtc().toString());
+                      },
+                      icon: const Icon(Icons.refresh),
+                    ),
+                  ],
+                ),
               ),
             );
           } else {
