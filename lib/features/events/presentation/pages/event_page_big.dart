@@ -36,7 +36,6 @@ class _EventPageBigState extends State<EventPageBig> with EventTypeUtility {
     eventsBloc = sl<EventsBloc>();
     invokeAPIandDump();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      invokeEventsPerDay(dateTime: exampleDateFromAPI.toString());
       calendarWeekController.jumpToDate(exampleDateFromAPI);
     });
     super.initState();
@@ -116,12 +115,10 @@ class _EventPageBigState extends State<EventPageBig> with EventTypeUtility {
         });
         invokeEventsPerDay(dateTime: selectedDateTime.toUtc().toString());
       },
-      dayOfWeekStyle: const TextStyle(
-        color: Colors.black54,
-        fontSize: 16,
-        fontFamily: 'Roboto',
-        fontWeight: FontWeight.w600,
-      ),
+      dayOfWeekStyle: Theme.of(context).textTheme.displaySmall!.copyWith(
+            color: Colors.black54,
+            fontWeight: FontWeight.w600,
+          ),
       dateStyle: Theme.of(context)
           .textTheme
           .displayMedium!
@@ -129,16 +126,15 @@ class _EventPageBigState extends State<EventPageBig> with EventTypeUtility {
       dateBackgroundColor: Colors.deepPurple.shade50,
       weekendsIndexes: const [DateTime.daysPerWeek],
       pressedDateBackgroundColor: Colors.deepPurple,
-      weekendsStyle: const TextStyle(
-        fontSize: 16,
-        color: Colors.black,
-        fontWeight: FontWeight.w600,
-      ),
-      pressedDateStyle: const TextStyle(
-        fontWeight: FontWeight.bold,
-        color: AppColors.whiteColor,
-        fontSize: 22,
-      ),
+      weekendsStyle: Theme.of(context).textTheme.displayMedium!.copyWith(
+            fontSize: AppConstants.fontSize16,
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+      pressedDateStyle: Theme.of(context).textTheme.displayMedium!.copyWith(
+            color: AppColors.whiteColor,
+            fontWeight: FontWeight.w600,
+          ),
       todayBackgroundColor: Colors.deepPurple,
       onDateLongPressed: (DateTime datetime) {},
       onWeekChanged: () {},
@@ -178,8 +174,19 @@ class _EventPageBigState extends State<EventPageBig> with EventTypeUtility {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Center(child: Text(AppConstants.noEventsMessage)),
-                  SvgPicture.asset(AppConstants.eventSvgFilePath),
+                  Center(
+                      child: Text(
+                    AppConstants.noEventsMessage,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w300),
+                  )),
+                  SvgPicture.asset(
+                    AppConstants.eventSvgFilePath,
+                    height: MediaQuery.sizeOf(context).height *
+                        AppConstants.height04,
+                  ),
                 ],
               );
             }
@@ -207,22 +214,39 @@ class _EventPageBigState extends State<EventPageBig> with EventTypeUtility {
           } else if (state is EventsLoading) {
             return const CircularProgressIndicator.adaptive();
           } else if (state is EventsInitial) {
-            return const Center(child: CircularProgressIndicator.adaptive());
+            return Center(
+              child: ElevatedButton.icon(
+                  onPressed: () {
+                    invokeEventsPerDay(
+                        dateTime: selectedDateTime.toUtc().toString());
+                  },
+                  icon: const Icon(Icons.ads_click),
+                  label: const Text(AppConstants.checkTodaysEvent)),
+            );
           } else if (state is EventsError) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(AppConstants.errorSvgFilePath),
-                  SizedBox(child: Text(state.errorMessage ?? "")),
-                  IconButton(
-                    onPressed: () {
-                      invokeEventsPerDay(
-                          dateTime: selectedDateTime.toUtc().toString());
-                    },
-                    icon: Icon(Icons.refresh, size: AppConstants.fontSize28),
-                  ),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      AppConstants.errorSvgFilePath,
+                      height: MediaQuery.sizeOf(context).height *
+                          AppConstants.height03,
+                    ),
+                    Text(
+                      state.errorMessage ?? "",
+                      textAlign: TextAlign.center,
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          invokeEventsPerDay(
+                              dateTime: selectedDateTime.toUtc().toString());
+                        },
+                        icon:
+                            Icon(Icons.refresh, size: AppConstants.fontSize26)),
+                  ],
+                ),
               ),
             );
           } else {

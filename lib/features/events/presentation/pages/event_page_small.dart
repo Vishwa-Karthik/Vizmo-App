@@ -35,9 +35,8 @@ class _EventPageSmallState extends State<EventPageSmall> with EventTypeUtility {
     selectedDateTime = exampleDateFromAPI;
     eventsBloc = sl<EventsBloc>();
     invokeAPIandDump();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       calendarWeekController.jumpToDate(exampleDateFromAPI);
-      invokeEventsPerDay(dateTime: exampleDateFromAPI.toUtc().toString());
     });
     super.initState();
   }
@@ -116,12 +115,10 @@ class _EventPageSmallState extends State<EventPageSmall> with EventTypeUtility {
         });
         invokeEventsPerDay(dateTime: selectedDateTime.toUtc().toString());
       },
-      dayOfWeekStyle: const TextStyle(
-        color: Colors.black54,
-        fontSize: 16,
-        fontFamily: 'Roboto',
-        fontWeight: FontWeight.w600,
-      ),
+      dayOfWeekStyle: Theme.of(context).textTheme.displaySmall!.copyWith(
+            color: Colors.black54,
+            fontWeight: FontWeight.w600,
+          ),
       dateStyle: Theme.of(context)
           .textTheme
           .displayMedium!
@@ -129,17 +126,16 @@ class _EventPageSmallState extends State<EventPageSmall> with EventTypeUtility {
       dateBackgroundColor: Colors.deepPurple.shade50,
       weekendsIndexes: const [DateTime.daysPerWeek],
       pressedDateBackgroundColor: Colors.deepPurple,
-      weekendsStyle: const TextStyle(
-        fontSize: 16,
-        color: Colors.black,
-        fontWeight: FontWeight.w600,
-      ),
-      pressedDateStyle: const TextStyle(
-        fontWeight: FontWeight.bold,
-        color: AppColors.whiteColor,
-        fontSize: 22,
-      ),
-      todayBackgroundColor: Colors.deepPurple,
+      weekendsStyle: Theme.of(context).textTheme.displayMedium!.copyWith(
+            fontSize: AppConstants.fontSize16,
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+      pressedDateStyle: Theme.of(context).textTheme.displayMedium!.copyWith(
+            color: AppColors.whiteColor,
+            fontWeight: FontWeight.w600,
+          ),
+      todayBackgroundColor: AppColors.deepPurple,
       onDateLongPressed: (DateTime datetime) {},
       onWeekChanged: () {},
       monthViewBuilder: (DateTime time) => Align(
@@ -178,8 +174,19 @@ class _EventPageSmallState extends State<EventPageSmall> with EventTypeUtility {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Center(child: Text(AppConstants.noEventsMessage)),
-                  SvgPicture.asset(AppConstants.eventSvgFilePath),
+                  Center(
+                      child: Text(
+                    AppConstants.noEventsMessage,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w300),
+                  )),
+                  SvgPicture.asset(
+                    AppConstants.eventSvgFilePath,
+                    height: MediaQuery.sizeOf(context).height *
+                        AppConstants.height04,
+                  ),
                 ],
               );
             }
@@ -207,7 +214,15 @@ class _EventPageSmallState extends State<EventPageSmall> with EventTypeUtility {
           } else if (state is EventsLoading) {
             return const CircularProgressIndicator.adaptive();
           } else if (state is EventsInitial) {
-            return const Center(child: CircularProgressIndicator.adaptive());
+            return Center(
+              child: ElevatedButton.icon(
+                  onPressed: () {
+                    invokeEventsPerDay(
+                        dateTime: selectedDateTime.toUtc().toString());
+                  },
+                  icon: const Icon(Icons.ads_click),
+                  label: const Text(AppConstants.checkTodaysEvent)),
+            );
           } else if (state is EventsError) {
             return Center(
               child: SingleChildScrollView(
@@ -216,16 +231,20 @@ class _EventPageSmallState extends State<EventPageSmall> with EventTypeUtility {
                   children: [
                     SvgPicture.asset(
                       AppConstants.errorSvgFilePath,
-                      height: AppConstants.imageSize250,
+                      height: MediaQuery.sizeOf(context).height *
+                          AppConstants.height03,
                     ),
-                    SizedBox(child: Text(state.errorMessage ?? "")),
+                    Text(
+                      state.errorMessage ?? "",
+                      textAlign: TextAlign.center,
+                    ),
                     IconButton(
-                      onPressed: () {
-                        invokeEventsPerDay(
-                            dateTime: selectedDateTime.toUtc().toString());
-                      },
-                      icon: const Icon(Icons.refresh),
-                    ),
+                        onPressed: () {
+                          invokeEventsPerDay(
+                              dateTime: selectedDateTime.toUtc().toString());
+                        },
+                        icon:
+                            Icon(Icons.refresh, size: AppConstants.fontSize26)),
                   ],
                 ),
               ),

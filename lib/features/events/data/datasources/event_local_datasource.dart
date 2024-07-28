@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:hive/hive.dart';
+import 'package:vizmo_app/core/error/failure.dart';
 import 'package:vizmo_app/features/events/data/models/vizmo_event_model.dart';
 import 'package:vizmo_app/features/events/data/schema/event_schema.dart';
 import 'package:vizmo_app/features/events/data/schema/vizmo_events_schema.dart';
@@ -27,7 +28,7 @@ class EventLocalDatasourceImpl implements AbstractEventLocalDatasource {
       await box.put('vizmoEventsKey', vizmoEventsSchema);
     } catch (e) {
       log(e.toString());
-      rethrow;
+      throw StorageFailure(errorMessage: e.toString());
     }
   }
 
@@ -71,7 +72,7 @@ class EventLocalDatasourceImpl implements AbstractEventLocalDatasource {
       return filteredModel;
     } catch (e) {
       log(e.toString());
-      rethrow;
+      throw StorageFailure(errorMessage: e.toString());
     }
   }
 
@@ -85,7 +86,7 @@ class EventLocalDatasourceImpl implements AbstractEventLocalDatasource {
           vizmoEventsSchema.data!.isNotEmpty;
     } catch (e) {
       log(e.toString());
-      rethrow;
+      throw StorageFailure(errorMessage: e.toString());
     }
   }
 }

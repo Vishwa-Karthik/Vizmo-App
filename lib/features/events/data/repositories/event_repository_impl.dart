@@ -25,6 +25,8 @@ class EventRepositoryImpl implements AbstractEventRepository {
         await eventLocalDatasource.dumpEvents(vizoEventModel: resultFromRemote);
       }
       return const Right(null);
+    } on StorageFailure catch (e) {
+      throw Left(StorageFailure(errorMessage: e.errorMessage));
     } catch (e) {
       throw Left(ServerFailure(errorMessage: e.toString()));
     }
@@ -38,6 +40,8 @@ class EventRepositoryImpl implements AbstractEventRepository {
           await eventLocalDatasource.fetchEventsPerDay(targetDate: targetDate);
 
       return Right(resultFromLocal);
+    } on StorageFailure catch (e) {
+      throw Left(StorageFailure(errorMessage: e.errorMessage));
     } catch (e) {
       throw Left(ServerFailure(errorMessage: e.toString()));
     }

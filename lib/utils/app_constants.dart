@@ -1,4 +1,7 @@
 class AppConstants {
+  // Height
+  static double height03 = 0.3;
+  static double height04 = 0.4;
   // Fonts
   static double fontSize14 = 14.0;
   static double fontSize16 = 16.0;
@@ -14,13 +17,11 @@ class AppConstants {
   static const String noEventsMessage = "Arrghh, No Events Today !";
   static const String somethingWentWrongMessage =
       "Something went wrong, Please try again!";
+  static const String checkTodaysEvent = "Check Today's Events";
 
   // File Path
   static const String eventSvgFilePath = 'lib/assets/svg/events.svg';
   static const String errorSvgFilePath = 'lib/assets/svg/error.svg';
-
-  // Image size
-  static const double imageSize250 = 250.0;
 
   // Padding
   static const double padding8 = 8.0;
